@@ -7,6 +7,10 @@ export default function AccueilPage({ navigation }: { navigation: any }) {
       <Text style={styles.title}>Bienvenue sur YangoCare</Text>
       <Text style={styles.subtitle}>Vous êtes connecté avec succès.</Text>
 
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('IASecour')}>
+        <Text style={styles.buttonText}>IA Secours</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Connexion')}>
         <Text style={styles.buttonText}>Se déconnecter</Text>
       </TouchableOpacity>

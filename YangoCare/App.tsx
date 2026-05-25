@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ConnexionPage from './pages/connexion';
 import InscriptionPage from './pages/inscription';
 import AccueilPage from './pages/accueil';
+import IASecourPage from './pages/iaSecour';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ export default function App() {
         <Stack.Screen name="Connexion" component={ConnexionPage} />
         <Stack.Screen name="Inscription" component={InscriptionPage} />
         <Stack.Screen name="Accueil" component={AccueilPage} />
+        <Stack.Screen name="IASecour" component={IASecourPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
