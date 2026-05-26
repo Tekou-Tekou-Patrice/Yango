@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 
-// TA VRAIE CLÉ GEMINI EXTRAITE DE TA CAPTURE D'ÉCRAN
-const GEMINI_API_KEY = 'AIzaSyAhqX1vTu5AmWT6dNagh8WFmqnZnArLXEY';
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+// Configuration GROQ - Version Texte Stable & Validée
+const GROQ_API_KEY = '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';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const MODEL_NAME = 'llama-3.3-70b-versatile'; // Ton modèle de production validé
 
 interface Message {
   id: string;
@@ -11,11 +12,11 @@ interface Message {
   sender: 'user' | 'ai';
 }
 
-export default function IASecours() {
+export default function IASecour() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Bonjour ! Je suis l'assistant d'urgence YangoCare. Décrivez-moi la situation (ex: brûlure, étouffement, malaise) pour obtenir les gestes de premiers secours.",
+      text: "Bonjour ! Je suis l'assistant d'urgence YangoCare. Décrivez-moi la situation (brûlure, blessure, étouffement, etc.) pour obtenir immédiatement les gestes de premiers secours.",
       sender: 'ai'
     }
   ]);
@@ -23,31 +24,36 @@ export default function IASecours() {
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
-  const systemPrompt = `Tu es un assistant virtuel expert en premiers secours pour l'application YangoCare. Ton rôle est d'aider l'utilisateur face à une situation d'urgence ou une question de santé de premier niveau.
-  1. Si la situation semble critique, commence TOUJOURS par : "⚠️ EN CAS D'URGENCE VITALE, CONTACTEZ IMMEDIATEMENT LES SECOURS (112 / 15 ou le 119 au Cameroun) !".
-  2. Donne des instructions claires, étape par étape, sous forme de liste à puces.
-  3. Utilise un ton calme et direct.
+  const systemPrompt = `Tu es un assistant virtuel expert en premiers secours pour l'application YangoCare. Ton rôle est d'analyser la situation décrite par l'utilisateur pour donner les gestes de premiers secours de premier niveau.
+  1. Si la situation montre une urgence critique (inconscience, hémorragie sévère, étouffement, arrêt cardiaque), commence TOUJOURS par : "⚠️ EN CAS D'URGENCE VITALE, CONTACTEZ IMMEDIATEMENT LES SECOURS (112 / 15 ou le 119 au Cameroun) !".
+  2. Donne les instructions de secours étape par étape sous forme de liste à puces claire.
+  3. Utilise un ton calme, direct et rassurant. Pas de jargon médical complexe.
   Réponds en français de manière concise.`;
 
-  const sendMessage = async () => {
-    if (inputText.trim() === '') return;
+  const handleSend = async (textToSend: string) => {
+    if (!textToSend.trim()) return;
 
-    const userMsg: Message = { id: Date.now().toString(), text: inputText, sender: 'user' };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages(prev => [...prev, { id: Date.now().toString(), text: textToSend, sender: 'user' }]);
     setInputText('');
     setIsLoading(true);
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
 
     const requestBody = {
-      contents: [{
-        parts: [{ text: `${systemPrompt}\n\nUtilisateur: ${userMsg.text}` }]
-      }]
+      model: MODEL_NAME,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: textToSend }
+      ],
+      temperature: 0.2,
+      max_tokens: 800
     };
 
     try {
-      const response = await fetch(GEMINI_API_URL, {
+      const response = await fetch(GROQ_API_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
       });
@@ -58,18 +64,18 @@ export default function IASecours() {
         throw new Error(data.error.message);
       }
 
-      const aiResponseText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Je n'ai pas pu analyser la situation.";
+      const aiResponseText = data?.choices?.[0]?.message?.content;
+      if (!aiResponseText) throw new Error("Réponse vide du serveur.");
 
-      const aiMsg: Message = { id: (Date.now() + 1).toString(), text: aiResponseText.trim(), sender: 'ai' };
-      setMessages(prev => [...prev, aiMsg]);
-    } catch (error) {
-      console.log("Erreur Gemini: ", error);
-      const errorMsg: Message = {
+      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), text: aiResponseText.trim(), sender: 'ai' }]);
+
+    } catch (error: any) {
+      console.error("Erreur Groq: ", error);
+      setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
-        text: "L'assistant Gemini bloque la connexion depuis l'application mobile. Pour votre sécurité, contactez le 112 ou le 15.",
+        text: `⚠️ Erreur Technique Assistant : ${error.message || error.toString()}`,
         sender: 'ai'
-      };
-      setMessages(prev => [...prev, errorMsg]);
+      }]);
     } finally {
       setIsLoading(false);
       setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
@@ -82,20 +88,33 @@ export default function IASecours() {
         <Text style={styles.headerTitle}>🚨 Guide de Premiers Secours IA</Text>
         <Text style={styles.headerSubtitle}>YangoCare Assistance</Text>
       </View>
+
       <FlatList
         ref={flatListRef}
         data={messages}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <View style={[styles.messageBubble, item.sender === 'user' ? styles.userBubble : styles.aiBubble]}>
-            <Text style={[styles.messageText, item.sender === 'user' ? styles.userText : styles.aiText]}>{item.text}</Text>
+            <Text style={[styles.messageText, item.sender === 'user' ? styles.userText : styles.aiText]}>
+              {item.text}
+            </Text>
           </View>
         )}
         contentContainerStyle={styles.chatContainer}
       />
+
       <View style={styles.inputContainer}>
-        <TextInput style={styles.input} placeholder="Ex: Que faire face à une brûlure ?" placeholderTextColor="#718096" value={inputText} onChangeText={setInputText} multiline editable={!isLoading} />
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage} disabled={isLoading}>
+        <TextInput
+          style={styles.input}
+          placeholder="Décrivez la situation d'urgence..."
+          placeholderTextColor="#718096"
+          value={inputText}
+          onChangeText={setInputText}
+          multiline
+          editable={!isLoading}
+        />
+
+        <TouchableOpacity style={styles.sendButton} onPress={() => handleSend(inputText)} disabled={isLoading}>
           {isLoading ? <ActivityIndicator color="#FFF" size="small" /> : <Text style={styles.sendButtonText}>Envoyer</Text>}
         </TouchableOpacity>
       </View>
@@ -116,7 +135,7 @@ const styles = StyleSheet.create({
   userText: { color: '#FFF' },
   aiText: { color: '#2D3748' },
   inputContainer: { flexDirection: 'row', padding: 12, backgroundColor: '#FFF', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#E2E8F0' },
-  input: { flex: 1, backgroundColor: '#EDF2F7', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15, maxHeight: 100, color: '#2D3748' },
-  sendButton: { marginLeft: 10, backgroundColor: '#E53E3E', borderRadius: 24, paddingVertical: 12, paddingHorizontal: 20, justifyContent: 'center', alignItems: 'center', minWidth: 80 },
+  input: { flex: 1, backgroundColor: '#EDF2F7', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15, maxHeight: 100, color: '#2D3748', marginRight: 8 },
+  sendButton: { backgroundColor: '#E53E3E', borderRadius: 24, paddingVertical: 12, paddingHorizontal: 16, justifyContent: 'center', alignItems: 'center', minWidth: 70 },
   sendButtonText: { color: '#FFF', fontWeight: 'bold', fontSize: 14 }
 });
