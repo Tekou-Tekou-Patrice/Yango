@@ -8,6 +8,7 @@ import ConnexionPage from './pages/connexion';
 import InscriptionPage from './pages/inscription';
 import AccueilPage from './pages/accueil';
 import IASecourPage from './pages/iaSecour';
+import DevenirChauffeur from './pages/DevenirChauffeur';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="Inscription" component={InscriptionPage} />
         <Stack.Screen name="Accueil" component={AccueilPage} />
         <Stack.Screen name="IASecour" component={IASecourPage} />
+        <Stack.Screen name="DevenirChauffeur" component={DevenirChauffeur} />
       </Stack.Navigator>
     </NavigationContainer>
   );
