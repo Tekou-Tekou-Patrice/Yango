@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 // Configuration GROQ
-const GROQ_API_KEY = 'MON_API_GROQ';
+//const GROQ_API_KEY = '';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL_NAME = 'llama-3.3-70b-versatile';
 

@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "380391642766",
+    "project_id": "yangocare-17f29",
+    "storage_bucket": "yangocare-17f29.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380391642766:android:40de1e5ad5b92a70919bdf",
+        "android_client_info": {
+          "package_name": "com.yangocare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380391642766-3sd66l553jm87mgialh1g10kvoo8o8e6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp-FRD2qsxCy3uRORCEkrhgbxX-A5eY_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380391642766-3sd66l553jm87mgialh1g10kvoo8o8e6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380391642766:android:eda287c98d070fbd919bdf",
+        "android_client_info": {
+          "package_name": "com.yangodriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380391642766-3sd66l553jm87mgialh1g10kvoo8o8e6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp-FRD2qsxCy3uRORCEkrhgbxX-A5eY_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380391642766-3sd66l553jm87mgialh1g10kvoo8o8e6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
