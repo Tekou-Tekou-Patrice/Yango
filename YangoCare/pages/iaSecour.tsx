@@ -14,8 +14,7 @@ import {
   Linking
 } from 'react-native';
 
-// Configuration GROQ
-//const GROQ_API_KEY = '';
+const GROQ_API_KEY = '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';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL_NAME = 'llama-3.3-70b-versatile';
 
@@ -84,7 +83,6 @@ export default function IASecour({ navigation }: { navigation: any }) {
 
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), text: aiResponseText.trim(), sender: 'ai' }]);
     } catch (error: any) {
-      console.error(error);
       setMessages(prev => [...prev, {
         id: 'err',
         text: "⚠️ Problème de connexion. En cas d'urgence réelle, appelez directement les secours.",
@@ -103,7 +101,6 @@ export default function IASecour({ navigation }: { navigation: any }) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
       >
-        {/* Header Moderne avec bouton Retour et SOS */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
             <TouchableOpacity

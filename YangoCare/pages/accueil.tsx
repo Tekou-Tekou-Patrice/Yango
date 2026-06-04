@@ -21,8 +21,8 @@ export default function AccueilPage({ navigation }: { navigation: any }) {
   const webViewRef = useRef<WebView>(null);
 
   // Clé Google Maps
-  //const GOOGLE_MAPS_KEY = "AIzaSyDb4Jf8MzMQ5coBzQM3gvcvYJq6WSvY8Sk";
-  const userLocation = { lat: 3.8480, lon: 11.5021 }; // Yaoundé par défaut
+  const GOOGLE_MAPS_KEY = "AIzaSyDb4Jf8MzMQ5coBzQM3gvcvYJq6WSvY8Sk";
+  const userLocation = { lat: 3.8480, lon: 11.5021 };
 
   useEffect(() => {
     const user = auth().currentUser;
