@@ -15,8 +15,16 @@ interface LocationState {
 export default function AccueilPage({ navigation }: { navigation: any }) {
   const [region, setRegion] = useState<LocationState | null>(null);
   const [loading, setLoading] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | null>(null);
 
-  // Demande de permission Android native (Obligatoire en React Native CLI)
+  const handlePayCash = () => {
+    setPaymentMethod('cash');
+    Alert.alert(
+      'Paiement en cash',
+      'Vous avez choisi de payer en cash. Le chauffeur sera informé et vous réglerez en espèces à la fin de la course.'
+    );
+  };
+
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') return true;
     
@@ -120,6 +128,15 @@ export default function AccueilPage({ navigation }: { navigation: any }) {
         >
           <Text style={styles.actionButtonText}>Commander une course</Text>
         </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.cashButton}
+          onPress={handlePayCash}
+        >
+          <Text style={styles.cashButtonText}>Payer en cash</Text>
+        </TouchableOpacity>
+        {paymentMethod === 'cash' && (
+          <Text style={styles.paymentInfo}>Mode de paiement sélectionné : Cash</Text>
+        )}
       </View>
     </View>
   );
@@ -203,5 +220,23 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  cashButton: {
+    marginTop: 12,
+    backgroundColor: '#F6E05E',
+    padding: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  cashButtonText: {
+    color: '#1A202C',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  paymentInfo: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#2F855A',
+    textAlign: 'center',
   },
 });
