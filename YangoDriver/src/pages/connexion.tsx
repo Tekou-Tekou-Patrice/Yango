@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View, TextInput, TouchableOpacity, Text, StyleSheet, Alert,
-  SafeAreaView, KeyboardAvoidingView, Platform, StatusBar, ActivityIndicator
-} from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, SafeAreaView, KeyboardAvoidingView, Platform, StatusBar, ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 export default function Connexion({ navigation }: { navigation: any }) {
@@ -12,15 +9,14 @@ export default function Connexion({ navigation }: { navigation: any }) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Champs vides", "Veuillez remplir tous les champs.");
+      Alert.alert("Erreur", "Champs obligatoires");
       return;
     }
     setLoading(true);
     try {
-      await auth().signInWithEmailAndPassword(email, password);
-      // La redirection sera gérée automatiquement par ton App.tsx
+      await auth().signInWithEmailAndPassword(email.trim(), password);
     } catch (error: any) {
-      Alert.alert("Erreur", error.message);
+      Alert.alert("Erreur", "Email ou mot de passe incorrect");
     } finally {
       setLoading(false);
     }
@@ -30,44 +26,18 @@ export default function Connexion({ navigation }: { navigation: any }) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.content}>
-
         <View style={styles.header}>
           <Text style={styles.logo}>Yango<Text style={{color: '#F6E05E'}}>Driver</Text></Text>
-          <Text style={styles.subtitle}>Espace Professionnel Chauffeur</Text>
+          <Text style={styles.subtitle}>Espace Partenaire</Text>
         </View>
-
         <View style={styles.form}>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Email professionnel</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="votre@email.com"
-              placeholderTextColor="#718096"
-              onChangeText={setEmail}
-              value={email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Mot de passe</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="••••••••"
-              placeholderTextColor="#718096"
-              secureTextEntry
-              onChangeText={setPassword}
-              value={password}
-            />
-          </View>
-
-          <TouchableOpacity style={styles.btnMain} onPress={handleLogin} disabled={loading}>
-            {loading ? <ActivityIndicator color="#000" /> : <Text style={styles.btnText}>SE CONNECTER</Text>}
+          <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#718096" onChangeText={setEmail} value={email} keyboardType="email-address" autoCapitalize="none" />
+          <TextInput style={styles.input} placeholder="Mot de passe" placeholderTextColor="#718096" secureTextEntry onChangeText={setPassword} value={password} />
+          <TouchableOpacity style={styles.btn} onPress={handleLogin} disabled={loading}>
+            {loading ? <ActivityIndicator color="#000" /> : <Text style={styles.btnT}>SE CONNECTER</Text>}
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.linkRegister} onPress={() => navigation.navigate('Inscription')}>
-            <Text style={styles.linkText}>Pas encore de compte ? <Text style={styles.highlight}>S'inscrire</Text></Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Inscription')}>
+            <Text style={styles.link}>Nouveau ? <Text style={{color: '#F6E05E'}}>S'inscrire</Text></Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -80,14 +50,10 @@ const styles = StyleSheet.create({
   content: { flex: 1, paddingHorizontal: 30, justifyContent: 'center' },
   header: { alignItems: 'center', marginBottom: 50 },
   logo: { fontSize: 42, fontWeight: '900', color: '#FFF' },
-  subtitle: { color: '#A0AEC0', fontSize: 16, marginTop: 5 },
+  subtitle: { color: '#A0AEC0', fontSize: 16 },
   form: { width: '100%' },
-  inputWrapper: { marginBottom: 20 },
-  label: { color: '#CBD5E0', marginBottom: 8, fontWeight: '600' },
-  input: { backgroundColor: '#2D3748', borderRadius: 12, padding: 18, fontSize: 16, color: '#FFF' },
-  btnMain: { backgroundColor: '#F6E05E', borderRadius: 12, padding: 20, alignItems: 'center', marginTop: 10 },
-  btnText: { color: '#000', fontWeight: 'bold', fontSize: 16 },
-  linkRegister: { marginTop: 25, alignItems: 'center' },
-  linkText: { color: '#A0AEC0', fontSize: 14 },
-  highlight: { color: '#F6E05E', fontWeight: 'bold' }
+  input: { backgroundColor: '#2D3748', borderRadius: 12, padding: 18, fontSize: 16, color: '#FFF', marginBottom: 15 },
+  btn: { backgroundColor: '#F6E05E', borderRadius: 12, padding: 20, alignItems: 'center', marginTop: 10 },
+  btnT: { color: '#000', fontWeight: 'bold', fontSize: 16 },
+  link: { color: '#A0AEC0', textAlign: 'center', marginTop: 25 }
 });

@@ -6,11 +6,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import { StatusBar } from 'react-native';
 
-// Import des pages Chauffeur
-import ConnexionPage from './src/pages/connexion';
-import InscriptionPage from './src/pages/inscription';
-import AccueilPage from './src/pages/accueil';
-import ChatPage from './src/pages/Chat';
+import Connexion from './src/pages/connexion';
+import Inscription from './src/pages/inscription';
+import Dashboard from './src/pages/Dashboard';
+import Accueil from './src/pages/accueil';
+import Chat from './src/pages/Chat';
+import Profile from './src/pages/Profile';
 
 const Stack = createStackNavigator();
 
@@ -18,15 +19,11 @@ export default function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Gère les changements d'état de l'utilisateur
-  function onAuthStateChanged(user: any) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
+    return auth().onAuthStateChanged((u) => {
+      setUser(u);
+      if (initializing) setInitializing(false);
+    });
   }, []);
 
   if (initializing) return null;
@@ -38,13 +35,15 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
             <>
-              <Stack.Screen name="Accueil" component={AccueilPage} />
-              <Stack.Screen name="Chat" component={ChatPage} />
+              <Stack.Screen name="Dashboard" component={Dashboard} />
+              <Stack.Screen name="Accueil" component={Accueil} />
+              <Stack.Screen name="Chat" component={Chat} />
+              <Stack.Screen name="Profile" component={Profile} />
             </>
           ) : (
             <>
-              <Stack.Screen name="Connexion" component={ConnexionPage} />
-              <Stack.Screen name="Inscription" component={InscriptionPage} />
+              <Stack.Screen name="Connexion" component={Connexion} />
+              <Stack.Screen name="Inscription" component={Inscription} />
             </>
           )}
         </Stack.Navigator>
